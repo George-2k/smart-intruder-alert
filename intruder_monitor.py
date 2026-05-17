@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+import json
+import os
+from datetime import datetime
+
 from sense_hat import SenseHat
 import time
 
@@ -20,6 +24,11 @@ SHAKE_THRESHOLD = 1.5
 
 # System's state
 armed = False
+
+# Event Folder and File setup
+STATE_DIR = "state" #create state variable
+EVENT_LOG_PATH = os.path.join(STATE_DIR, "events.json") # Full file path
+os.makedirs(STATE_DIR, exist_ok=True) # Create the folder if it doesn't exist
 
 # =========================
 # 	FUNCTIONS
@@ -57,6 +66,7 @@ def disarm_system():
 
 def trigger_alarm():
     print("BREAK-IN DETECTED!")
+    log_event()
 
     # Flash LEDs red
     for i in range(5): # Repeat 5 times
@@ -72,6 +82,28 @@ def trigger_alarm():
         text_colour=RED,
         scroll_speed=0.05
     )
+
+
+# Save the Events to JSON file
+def log_event():
+    event = {
+        "event_type": "break_in",
+        "timestamp": datetime.now().isoformat(timespec="seconds"),
+        "message": "Movement detected while system was armed"
+    }
+
+    try:
+        with open(EVENT_LOG_PATH, "r") as file: # Open and read Json file
+            events = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError): # If file doesn't exist or is empty
+        events = [] # Create an empty "events" list
+
+    events.append(event) # Add new events to events list
+
+    with open(EVENT_LOG_PATH, "w") as file: # Write to JSON file
+        json.dump(events, file, indent=4) 
+
+    print("EVENT logged:", event)
 
 
 # =========================
