@@ -1,17 +1,24 @@
+
 #!/usr/bin/env python3
 
 import json
 import os
+import time
 from datetime import datetime
 
 from sense_hat import SenseHat
-import time
+from picamera2 import Picamera2
 
 # =========================
 #	 SETUP
 # =========================
 
 sense = SenseHat()
+
+picam2 = Picamera2()
+picam2.configure(picam2.create_still_configuration())
+
+picam2.start()
 sense.clear()
 
 # Colours
@@ -26,9 +33,14 @@ SHAKE_THRESHOLD = 1.5
 armed = False
 
 # Event Folder and File setup
-STATE_DIR = "state" #create state variable
+STATE_DIR = "state" # Folder used to store event data
 EVENT_LOG_PATH = os.path.join(STATE_DIR, "events.json") # Full file path
 os.makedirs(STATE_DIR, exist_ok=True) # Create the folder if it doesn't exist
+
+# Image Folder and File setup
+STATIC_DIR = "static"
+IMAGE_PATH = os.path.join(STATIC_DIR, "last_intruder.jpg")
+os.makedirs(STATIC_DIR, exist_ok=True)
 
 # =========================
 # 	FUNCTIONS
@@ -64,9 +76,17 @@ def disarm_system():
     sense.clear(BLACK)
 
 
+def capture_intruder_photo():
+    print("Capturing intruder photo...")
+    picam2.capture_file(IMAGE_PATH) # Capture photo and save to IMAGE_PATH
+    print("Photo saved to:", IMAGE_PATH)
+    return IMAGE_PATH # Return path of captured image for event logging
+
+
 def trigger_alarm():
     print("BREAK-IN DETECTED!")
-    log_event()
+    image_path = capture_intruder_photo() # Take picture and store image path
+    log_event(image_path) # Log event with image path
 
     # Flash LEDs red
     for i in range(5): # Repeat 5 times
@@ -85,11 +105,12 @@ def trigger_alarm():
 
 
 # Save the Events to JSON file
-def log_event():
+def log_event(image_path):
     event = {
         "event_type": "break_in",
         "timestamp": datetime.now().isoformat(timespec="seconds"),
-        "message": "Movement detected while system was armed"
+        "message": "Movement detected while system was armed",
+        "image": image_path
     }
 
     try:
@@ -98,7 +119,7 @@ def log_event():
     except (FileNotFoundError, json.JSONDecodeError): # If file doesn't exist or is empty
         events = [] # Create an empty "events" list
 
-    events.append(event) # Add new events to events list
+    events.append(event) # Add new event to events list
 
     with open(EVENT_LOG_PATH, "w") as file: # Write to JSON file
         json.dump(events, file, indent=4) 
@@ -135,4 +156,5 @@ except KeyboardInterrupt: # sends a message to the console if user presses CTRL+
     print("Program stopped")
 
 finally:
+    picam2.stop()
     sense.clear()

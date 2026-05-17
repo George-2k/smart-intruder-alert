@@ -33,5 +33,29 @@
         "event_type": "break_in",
         "timestamp": "2026-05-17T17:18:56",
         "message": "Movement detected while system was armed"
+    },
+    {
+        "event_type": "break_in",
+        "timestamp": "2026-05-17T18:10:40",
+        "message": "Movement detected while system was armed",
+        "image": "static/last_intruder.jpg"
+    },
+    {
+        "event_type": "break_in",
+        "timestamp": "2026-05-17T18:11:01",
+        "message": "Movement detected while system was armed",
+        "image": "static/last_intruder.jpg"
+    },
+    {
+        "event_type": "break_in",
+        "timestamp": "2026-05-17T18:36:40",
+        "message": "Movement detected while system was armed",
+        "image": "static/last_intruder.jpg"
+    },
+    {
+        "event_type": "break_in",
+        "timestamp": "2026-05-17T18:36:49",
+        "message": "Movement detected while system was armed",
+        "image": "static/last_intruder.jpg"
     }
 ]
