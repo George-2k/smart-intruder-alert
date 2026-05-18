@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Smart Intruder Alert</title>
+    <meta http-equiv="refresh" content="10">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+
+        img {
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.25);
+        }
+
+        .alert {
+            color: darkred;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 2rem;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border-bottom: 1px solid #ddd;
+            padding: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Smart Intruder Alert System</h1>
+
+    {% if latest_event %}
+        <h2 class="alert">Latest Break-In Event</h2>
+        <p><strong>Time:</strong> {{ latest_event.timestamp }}</p>
+        <p><strong>Message:</strong> {{ latest_event.message }}</p>
+	
+	<h3>Most Recent Intruder:</h3>
+        <img src="{{ url_for('static', filename='last_intruder.jpg') }}" alt="Latest intruder image">
+    {% else %}
+        <p>No break-in events recorded yet.</p>
+    {% endif %}
+
+    <h2>Event History</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Event</th>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %} <!-- Loop through each event -->
+                <tr>
+                    <td>{{ event.timestamp }}</td>
+                    <td>{{ event.event_type }}</td>
+                    <td>{{ event.message }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
