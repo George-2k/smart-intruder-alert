@@ -105,6 +105,8 @@ def capture_intruder_photo():
 
 def trigger_alarm():
     print("BREAK-IN DETECTED!")
+    blynk.log_event("break_in")
+
     image_path = capture_intruder_photo() # Take picture and store image path
     log_event(image_path) # Log event with image path
 
