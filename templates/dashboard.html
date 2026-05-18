@@ -60,7 +60,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for event in events %} <!-- Loop through each event -->
+            {% for event in events[-20:] | reverse %} <!-- Loop through the last 20 events and show newest first -->
                 <tr>
                     <td>{{ event.timestamp }}</td>
                     <td>{{ event.event_type }}</td>
