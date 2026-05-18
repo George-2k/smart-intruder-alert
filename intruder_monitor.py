@@ -6,6 +6,8 @@ import os
 import time
 from datetime import datetime
 
+import BlynkLib
+
 from sense_hat import SenseHat
 from picamera2 import Picamera2
 
@@ -20,6 +22,10 @@ picam2.configure(picam2.create_still_configuration())
 
 picam2.start()
 sense.clear()
+
+# Blynk connection
+BLYNK_AUTH = os.getenv("BLYNK_AUTH")
+blynk = BlynkLib.Blynk(BLYNK_AUTH)
 
 # Colours
 GREEN = (0, 255, 0)
@@ -46,6 +52,18 @@ os.makedirs(STATIC_DIR, exist_ok=True)
 # 	FUNCTIONS
 # =========================
 
+# Blynk switch to arm/disarm the system
+@blynk.on("V1")
+def handle_v1_write(value):
+    global armed
+    button_value = value[0]
+    print("Blynk button value:", button_value)
+    if button_value == "1":
+        arm_system()
+    else:
+        disarm_system()
+
+
 def is_movement_detected():
 
     accel = sense.get_accelerometer_raw()
@@ -63,6 +81,7 @@ def is_movement_detected():
 def arm_system():
     global armed # use previously made armed variable
     armed = True
+    blynk.virtual_write(0, 1)
     print("System armed")
     sense.clear(GREEN)
     time.sleep(1)
@@ -72,6 +91,7 @@ def arm_system():
 def disarm_system():
     global armed
     armed = False
+    blynk.virtual_write(0, 0)
     print("System disarmed")
     sense.clear(BLACK)
 
@@ -137,6 +157,8 @@ print("Press joystick middle button to arm/disarm")
 try:
 
     while True:
+
+        blynk.run()
 
         # Read joystick events
         for event in sense.stick.get_events():
