@@ -12,6 +12,10 @@ The system detects movement using the Sense HAT accelerometer. When movement is 
 - sends push and email notifications using Blynk
 - displays the latest event on a Flask web dashboard
 
+## Project Demonstration Video
+
+https://youtu.be/lnRWJS0HFOU
+
 ## Features
 
 - Motion detection using Sense HAT accelerometer
