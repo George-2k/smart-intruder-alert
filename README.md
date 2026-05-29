@@ -163,7 +163,7 @@ Terminal output showing the intruder monitoring system running and detecting mov
 - User authentication for the Flask dashboard
 - SMS notifications
 - Option to view all past break-in events through the dashboard
-- Store a unique image for each break-in event and allow users to view previous intruder photos through the dashboard
+- Allow users to view previous intruder photos through the dashboard
 
 ## Status
 

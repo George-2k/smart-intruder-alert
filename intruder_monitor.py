@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 
 import json
@@ -45,8 +44,12 @@ os.makedirs(STATE_DIR, exist_ok=True) # Create the folder if it doesn't exist
 
 # Image Folder and File setup
 STATIC_DIR = "static"
-IMAGE_PATH = os.path.join(STATIC_DIR, "last_intruder.jpg")
+IMAGE_DIR = os.path.join(STATIC_DIR, "intruder_images")
+LATEST_IMAGE_PATH = os.path.join(STATIC_DIR, "last_intruder.jpg")
+
 os.makedirs(STATIC_DIR, exist_ok=True)
+os.makedirs(IMAGE_DIR, exist_ok=True)
+
 
 # =========================
 # 	FUNCTIONS
@@ -97,10 +100,17 @@ def disarm_system():
 
 
 def capture_intruder_photo():
+    timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    image_filename = f"intruder_{timestamp}.jpg"
+    image_path = os.path.join(IMAGE_DIR, image_filename)
+
     print("Capturing intruder photo...")
-    picam2.capture_file(IMAGE_PATH) # Capture photo and save to IMAGE_PATH
-    print("Photo saved to:", IMAGE_PATH)
-    return IMAGE_PATH # Return path of captured image for event logging
+    picam2.capture_file(image_path) # Capture photo and save to image_path
+
+    picam2.capture_file(LATEST_IMAGE_PATH) # Also keep this image as the latest image for the Flask dashboard
+
+    print("Photo saved to:", image_path)
+    return image_path # Return path of captured image for event logging
 
 
 def trigger_alarm():
